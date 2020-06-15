@@ -17,7 +17,7 @@ options.forEach(line => {
 })
 
 file_path = path.resolve(file_path);
-let file = require(file_path);
+let file = require(file_path) || {};
 
 Object.keys(args).forEach(key => {
   let value = args[key];

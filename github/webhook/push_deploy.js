@@ -52,14 +52,20 @@ const handle = async (json, config) => {
     if (!json.pusher) return resolve(false);
     
     console.log(`new push from ${json.pusher.name} (${json.pusher.email}).`);
+    let cwd = config.cwd || path.resolve(options.path, "../../");
+    
+    console.log("working directory: " + cwd);
 
     for (let i = 0; i < config.tasks.length; i++) {
         let task = fix(json, config.tasks[i]);
         console.log(`task #${i}: ${task}`);
         await new Promise (r => {
-            execute(task, (error, output) => {
-                if (error) return r();
-                console.log(`task #${i}: ${output}`);
+            execute(task, {cwd}, (error, stdin, stderr) => {
+                if (error) console.error(error);
+                if (stderr) console.error(stderr);
+              
+                console.log(`task #${i}: ${stdin}`);
+                
                 r();
             });
         });
